@@ -1,13 +1,19 @@
 // NodeJS modules
 // Necessary methods: add to cart, delete item from cart, edit cart sections/labels
+// MongoDB client module
 const { MongoClient} = require('mongodb');
+// http module
 const http = require('http');
+// module to query string
 const querystr = require('querystring');
 
+// Port
 const port = (process.env.PORT || 8000);
 
+// Regular Expression to match cart requests
 const regExpCart = new RegExp('^\/cart.*');
 
+// Function to setup database connection
 async function initiateDBConnection(){
 
         // MongoDB connection logic
@@ -23,13 +29,16 @@ async function initiateDBConnection(){
         } finally{
             await client.close()
         }
+        // Returning client to use
         return client
 }
 
+// Funciton to add party to cart
 function addPartyToCart(request, reponse, user_id, body){
+    
     let resMsg = {};
-    const cleint = initiateDBConnection();
-    let body = "";
+    const client = initiateDBConnection();
+    let body = '';
 
     request.on('data', function(data) {
         body += data;
@@ -39,7 +48,7 @@ function addPartyToCart(request, reponse, user_id, body){
         try{
             // party_id is the primary key 
             parsed = JSON.parse(body);
-            client.db('PartySafari').collection('cart').
+            
 
         }
 
