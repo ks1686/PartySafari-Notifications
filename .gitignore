@@ -1,0 +1,9 @@
+# env with MongoDB credentials
+API/.env
+
+
+#ignore node_modules folder and everything inside it
+node_modules/
+
+#ignore css files in assets folder
+assets/css/
