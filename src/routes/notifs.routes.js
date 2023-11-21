@@ -5,7 +5,7 @@ function handleRequest(req, res) {
 
   const parsedUrl = new URL(req.url, "http://localhost:3000");
   if (
-    parsedUrl.pathname === "/api/notifs/get-one" &&
+    parsedUrl.pathname === "/api/notifications/get-one" &&
     req.method === "GET" &&
     parsedUrl.searchParams.has("notif_id")
   ) {
@@ -14,7 +14,6 @@ function handleRequest(req, res) {
       res,
       parsedUrl.searchParams.get("notif_id")
     );
-    //!Create a notification added here!
   }
 }
 

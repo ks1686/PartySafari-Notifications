@@ -47,7 +47,7 @@ h3 {
   padding: 30px;
 }
 
-.see_reviews {
+.see_notifs {
   margin-top: 20px;
   margin-bottom: 30px;
   padding: 20px;
@@ -59,7 +59,7 @@ h3 {
   font-weight: bold;
 }
 
-.see_reviews:hover {
+.see_notifs:hover {
   padding: 20px;
   background-color: var(--darkened-green);
   border: none;

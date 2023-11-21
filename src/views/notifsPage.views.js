@@ -1,12 +1,12 @@
 const path = require("path");
-const fs = require("fs");
+const fs = require("fs").promises;
 
 const servePage = async (req, res) => {
   try {
     //Read HTML template
     const templatePath = path.join(
       __dirname,
-      "./../../public/html/notifsPage.html"
+      "../../public/html/notifsTemplate.html"
     );
     const htmlContent = await fs.readFile(templatePath, "utf8");
 
