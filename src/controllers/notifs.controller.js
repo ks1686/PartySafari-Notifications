@@ -12,10 +12,14 @@ const mongoClient = new MongoClient(uri, {
 });
 
 let notifsCollection;
+let usersCollection; //unsure if needed
+let hostCollection; //unsure if needed
 
 exports.dbConnect = async () => {
   const db = mongoClient.db("Notifications");
   notifsCollection = db.collection("notifications");
+  usersCollection = db.collection("users");
+  hostCollection = db.collection("hosts");
 };
 
 exports.getOneNotifByID = async (req, res, notif_id) => {
@@ -36,14 +40,193 @@ exports.getOneNotifByID = async (req, res, notif_id) => {
       res.writeHead(404);
       res.end("Notif not found");
     }
-    console.log(notif);
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(JSON.stringify(notif));
+    console.log(notif); //Log notif details to console
+    res.writeHead(200, { "Content-Type": "application/json" }); //200 OK
+    res.end(JSON.stringify(notif)); //End response
   } catch (error) {
-    console.log(error);
-    res.writeHead(500);
-    res.end("Internal server error");
+    console.log(error); //Log error to console
+    res.writeHead(500, { "Content-Type": "text/plain" }); //500 Internal Server Error
+    res.end("Internal server error"); //End response
   }
 };
 
-//!Create a notification
+//Create a notification
+exports.createNotif = async (
+  req,
+  res,
+  user_id,
+  host_id,
+  notification_id,
+  notification_text
+) => {
+  //validate presense of user_id parameter
+  if (!user_id) {
+    res.writeHead(400);
+    res.end("Missing user_id parameter");
+  }
+
+  //validate presense of host_id parameter
+  if (!host_id) {
+    res.writeHead(400);
+    res.end("Missing host_id parameter");
+  }
+
+  //validate presense of notification_id parameter
+  if (!notification_id) {
+    res.writeHead(400);
+    res.end("Missing notification_id parameter");
+  }
+
+  //validate presense of notification_text parameter
+  if (!notification_text) {
+    res.writeHead(400);
+    res.end("Missing notification_text parameter");
+  }
+
+  try {
+    //Check if notif exists already
+    const existingNotif = await notifsCollection.findOne({
+      user_id: user_id,
+      host_id: host_id,
+      notification_id: notification_id,
+    });
+
+    //If notif exists, return 409 error
+    if (existingNotif) {
+      res.writeHead(409);
+      res.end("Notif already exists");
+    }
+
+    //Create new notif doc
+    const notif = {
+      user_id: user_id,
+      host_id: host_id,
+      notification_id: notification_id,
+      notification_text: notification_text,
+    };
+
+    //Insert new notif doc into notifs collection
+    const result = await notifsCollection.insertOne(notif);
+
+    //Check if insert worked
+    if (result.insertedCount === 1) {
+      res.writeHead(201, { "Content-Type": "text/plain" }); //201 Created
+      res.end("Notif created"); //End response
+    } else {
+      res.writeHead(500, { "Content-Type": "text/plain" }); //500 Internal Server Error
+      res.end("Internal server error"); //End response
+    }
+  } catch (error) {
+    console.error(error);
+    res.writeHead(500, { "Content-Type": "text/plain" }); //500 Internal Server Error
+    res.end("Internal server error"); //End response
+  }
+};
+
+//Update a notification
+exports.updateNotif = async (
+  req,
+  res,
+  user_id,
+  host_id,
+  notification_id,
+  notification_text
+) => {
+  //validate presense of all parameters
+  const params = { user_id, host_id, notification_id, notification_text };
+  for (const param in params) {
+    if (!params[param]) {
+      //If parameter is missing
+      res.writeHead(400);
+      res.end(`Missing ${param} parameter`);
+    }
+  }
+
+  try {
+    //Check if notif exists already
+    const existingNotif = await notifsCollection.findOne({
+      user_id: user_id,
+      host_id: host_id,
+      notification_id: notification_id,
+    });
+
+    //If notif exists, update it
+    if (existingNotif) {
+      const result = await notifsCollection.updateOne(
+        {
+          user_id: user_id,
+          host_id: host_id,
+          notification_id: notification_id,
+        },
+        {
+          $set: {
+            notification_text: notification_text,
+          },
+        }
+      );
+
+      //Check if update worked
+      if (result.modifiedCount === 1) {
+        res.writeHead(200, { "Content-Type": "text/plain" }); //200 OK
+        res.end("Notif updated"); //End response
+      } else {
+        res.writeHead(500, { "Content-Type": "text/plain" }); //500 Internal Server Error
+        res.end("Internal server error"); //End response
+      }
+    } else {
+      res.writeHead(404);
+      res.end("Notif not found");
+    }
+  } catch (error) {
+    console.error(error);
+    res.writeHead(500, { "Content-Type": "text/plain" }); //500 Internal Server Error
+    res.end("Internal server error"); //End response
+  }
+};
+
+//Delete a notification
+exports.deleteNotif = async (req, res, user_id, host_id, notification_id) => {
+  //validate presense of all parameters
+  const params = { user_id, host_id, notification_id };
+  for (const param in params) {
+    if (!params[param]) {
+      //If parameter is missing
+      res.writeHead(400);
+      res.end(`Missing ${param} parameter`);
+    }
+  }
+
+  try {
+    //Check if notif exists already
+    const existingNotif = await notifsCollection.findOne({
+      user_id: user_id,
+      host_id: host_id,
+      notification_id: notification_id,
+    });
+
+    //If notif exists, delete it
+    if (existingNotif) {
+      const result = await notifsCollection.deleteOne({
+        user_id: user_id,
+        host_id: host_id,
+        notification_id: notification_id,
+      });
+
+      //Check if delete worked
+      if (result.deletedCount === 1) {
+        res.writeHead(200, { "Content-Type": "text/plain" }); //200 OK
+        res.end("Notif deleted"); //End response
+      } else {
+        res.writeHead(500, { "Content-Type": "text/plain" }); //500 Internal Server Error
+        res.end("Internal server error"); //End response
+      }
+    } else {
+      res.writeHead(404);
+      res.end("Notif not found");
+    }
+  } catch {
+    console.error(error);
+    res.writeHead(500, { "Content-Type": "text/plain" }); //500 Internal Server Error
+    res.end("Internal server error"); //End response
+  }
+};
