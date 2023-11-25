@@ -21,13 +21,13 @@ let usersCollection;
 let hostCollection; //unsure if needed
 
 exports.dbConnect = async () => {
-  const db = mongoClient.db("Notifications");
+  const db = mongoClient.db("test_db"); //!Change to final db name
   notifsCollection = db.collection("notifications");
   usersCollection = db.collection("users");
   hostCollection = db.collection("hosts");
 };
 
-//?For testing, not really neede
+//?For testing, not really needed on frontend
 exports.getOneNotifByID = async (req, res, notif_id) => {
   //validate presense of notif_id parameter
   if (!notif_id) {
@@ -62,8 +62,8 @@ exports.createNotif = async (
   res,
   user_id,
   host_id,
-  notification_id,
-  notification_text
+  notif_id,
+  notif_text
 ) => {
   //validate presense of user_id parameter
   if (!user_id) {
@@ -77,16 +77,16 @@ exports.createNotif = async (
     res.end("Missing host_id parameter");
   }
 
-  //validate presense of notification_id parameter
-  if (!notification_id) {
+  //validate presense of notif_id parameter
+  if (!notif_id) {
     res.writeHead(400);
-    res.end("Missing notification_id parameter");
+    res.end("Missing notif_id parameter");
   }
 
-  //validate presense of notification_text parameter
-  if (!notification_text) {
+  //validate presense of notif_text parameter
+  if (!notif_text) {
     res.writeHead(400);
-    res.end("Missing notification_text parameter");
+    res.end("Missing notif_text parameter");
   }
 
   try {
@@ -94,7 +94,7 @@ exports.createNotif = async (
     const existingNotif = await notifsCollection.findOne({
       user_id: user_id,
       host_id: host_id,
-      notification_id: notification_id,
+      notif_id: notif_id,
     });
 
     //If notif exists, return 409 error
@@ -107,8 +107,8 @@ exports.createNotif = async (
     const notif = {
       user_id: user_id,
       host_id: host_id,
-      notification_id: notification_id,
-      notification_text: notification_text,
+      notif_id: notif_id,
+      notif_text: notif_text,
     };
 
     //Insert new notif doc into notifs collection
@@ -135,11 +135,11 @@ exports.updateNotif = async (
   res,
   user_id,
   host_id,
-  notification_id,
-  notification_text
+  notif_id,
+  notif_text
 ) => {
   //validate presense of all parameters
-  const params = { user_id, host_id, notification_id, notification_text };
+  const params = { user_id, host_id, notif_id, notif_text };
   for (const param in params) {
     if (!params[param]) {
       //If parameter is missing
@@ -153,7 +153,7 @@ exports.updateNotif = async (
     const existingNotif = await notifsCollection.findOne({
       user_id: user_id,
       host_id: host_id,
-      notification_id: notification_id,
+      notif_id: notif_id,
     });
 
     //If notif exists, update it
@@ -162,11 +162,11 @@ exports.updateNotif = async (
         {
           user_id: user_id,
           host_id: host_id,
-          notification_id: notification_id,
+          notif_id: notif_id,
         },
         {
           $set: {
-            notification_text: notification_text,
+            notif_text: notif_text,
           },
         }
       );
@@ -191,9 +191,9 @@ exports.updateNotif = async (
 };
 
 //Delete a notification
-exports.deleteNotif = async (req, res, user_id, host_id, notification_id) => {
+exports.deleteNotif = async (req, res, user_id, host_id, notif_id) => {
   //validate presense of all parameters
-  const params = { user_id, host_id, notification_id };
+  const params = { user_id, host_id, notif_id };
   for (const param in params) {
     if (!params[param]) {
       //If parameter is missing
@@ -207,7 +207,7 @@ exports.deleteNotif = async (req, res, user_id, host_id, notification_id) => {
     const existingNotif = await notifsCollection.findOne({
       user_id: user_id,
       host_id: host_id,
-      notification_id: notification_id,
+      notif_id: notif_id,
     });
 
     //If notif exists, delete it
@@ -215,7 +215,7 @@ exports.deleteNotif = async (req, res, user_id, host_id, notification_id) => {
       const result = await notifsCollection.deleteOne({
         user_id: user_id,
         host_id: host_id,
-        notification_id: notification_id,
+        notif_id: notif_id,
       });
 
       //Check if delete worked
@@ -237,11 +237,11 @@ exports.deleteNotif = async (req, res, user_id, host_id, notification_id) => {
   }
 };
 
-//Sending a notification given notification_id
-exports.sendNotif = async (req, res, notification_id) => {
+//Sending a notification given notif_id
+exports.sendNotif = async (req, res, notif_id) => {
   //Check notification exists
   const notif = await notifsCollection.findOne({
-    notification_id: notification_id,
+    notif_id: notif_id,
   });
 
   //If notif not found, return 404 error
@@ -251,7 +251,7 @@ exports.sendNotif = async (req, res, notification_id) => {
   }
 
   //Get notification text and user_id
-  const notifText = notif.notification_text;
+  const notifText = notif.notif_text;
   const user_id = notif.user_id;
 
   try {

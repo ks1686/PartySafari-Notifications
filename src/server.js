@@ -22,10 +22,6 @@ const server = http.createServer((req, res) => {
     serveNotifsPage(req, res);
   } else if (pathname.endsWith(".js") || pathname.endsWith(".css")) {
     serveStaticFile(req, res);
-  } else if (pathname.startsWith("/api/users")) {
-    //handleUserRequests(req, res);
-  } else if (pathname.startsWith("/api/parties")) {
-    //handlePartyRequests(req, res);
   } else {
     res.writeHead(404);
     res.end("Page not found");

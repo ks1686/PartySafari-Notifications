@@ -21,18 +21,18 @@ function handleRequest(req, res) {
   else if (
     parsedUrl.pathname === "/api/notifications/create" &&
     req.method === "POST" &&
+    parsedUrl.searchParams.has("notif_id") &&
     parsedUrl.searchParams.has("user_id") &&
     parsedUrl.searchParams.has("host_id") &&
-    parsedUrl.searchParams.has("notification_id") &&
-    parsedUrl.searchParams.has("notification_text")
+    parsedUrl.searchParams.has("notif_text")
   ) {
     notifsController.createNotif(
       req,
       res,
+      parsedUrl.searchParams.get("notif_id"),
       parsedUrl.searchParams.get("user_id"),
       parsedUrl.searchParams.get("host_id"),
-      parsedUrl.searchParams.get("notification_id"),
-      parsedUrl.searchParams.get("notification_text")
+      parsedUrl.searchParams.get("notif_text")
     );
   }
 
@@ -43,8 +43,7 @@ function handleRequest(req, res) {
     parsedUrl.searchParams.has("notif_id") &&
     parsedUrl.searchParams.has("user_id") &&
     parsedUrl.searchParams.has("host_id") &&
-    parsedUrl.searchParams.has("notification_id") &&
-    parsedUrl.searchParams.has("notification_text")
+    parsedUrl.searchParams.has("notif_text")
   ) {
     notifsController.updateNotif(
       req,
@@ -52,8 +51,7 @@ function handleRequest(req, res) {
       parsedUrl.searchParams.get("notif_id"),
       parsedUrl.searchParams.get("user_id"),
       parsedUrl.searchParams.get("host_id"),
-      parsedUrl.searchParams.get("notification_id"),
-      parsedUrl.searchParams.get("notification_text")
+      parsedUrl.searchParams.get("notif_text")
     );
   }
 
@@ -73,7 +71,7 @@ function handleRequest(req, res) {
   //Sending an existing notifation
   else if (
     parsedUrl.pathname === "/api/notifications/send" &&
-    req.method === "POST" &&
+    req.method === "GET" &&
     parsedUrl.searchParams.has("notif_id")
   ) {
     notifsController.sendNotif(
