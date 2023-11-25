@@ -51,19 +51,22 @@ This project follows the given directory structure with various components organ
 ### `/src`: The server-side codebase including the MVC (Model-View-Controller) architecture.
 
 - `/controllers`: Contains controllers that handle direct interactions with the mongodb.
-- `/model`: Represents the application's data structures.
-  -
+- ## `/model`: Represents the application's data structures.
 - `/routes`: Routes requests to the right controllers.
 - `server.js`: The main entry point for the Node.js server.
 - `/views`: Server-side templates and views.
   - `landingPage.views.js`: Serves the landing page view.
-  - `notifsPage.views.js`: Serves a testing environment page to the user; allows for testing the sending notifications feature. WIP.
+  - `notifsPage.views.js`: Serves a testing environment page to the user; allows for testing the sending notifications feature. WIP (not currently operational; rely on Postman).
 
 ## Additional Information
 
 - Make sure you have your .env file located in `/src` and configured like so:
+
   ```
-  MONGO_USER="your_first_name"
-  MONGO_USER_PASSWORD="your_password_which_chirag_shouldve_DMed_to_you_on_discord"
+  MONGO_USER="your_username"
+  MONGO_USER_PASSWORD="your_password"
+  SENDGRID_API_KEY="provided_on_request"
+
   ```
+
 - Make sure you have the necessary node dependencies. Rebuild your package with `npm ci` to be safe.
