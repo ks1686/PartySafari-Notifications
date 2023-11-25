@@ -17,7 +17,7 @@ const mongoClient = new MongoClient(uri, {
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 let notifsCollection;
-let usersCollection; //unsure if needed
+let usersCollection;
 let hostCollection; //unsure if needed
 
 exports.dbConnect = async () => {
@@ -27,6 +27,7 @@ exports.dbConnect = async () => {
   hostCollection = db.collection("hosts");
 };
 
+//?For testing, not really neede
 exports.getOneNotifByID = async (req, res, notif_id) => {
   //validate presense of notif_id parameter
   if (!notif_id) {
