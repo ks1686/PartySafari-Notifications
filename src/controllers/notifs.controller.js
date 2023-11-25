@@ -1,6 +1,8 @@
-const dotenv = require("dotenv");
-const path = require("path");
+const dotenv = require("dotenv"); //import dotenv module
+const path = require("path"); //import path module
+const sgMail = require("@sendgrid/mail"); //import sendgrid module
 
+//Configure mongoDB
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_USER_PASSWORD}@atlascluster.bvzvel0.mongodb.net/?retryWrites=true&w=majority`;
 const mongoClient = new MongoClient(uri, {
@@ -10,6 +12,9 @@ const mongoClient = new MongoClient(uri, {
     deprecationErrors: true,
   },
 });
+
+//Configure SendGrid
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 let notifsCollection;
 let usersCollection; //unsure if needed
@@ -224,6 +229,57 @@ exports.deleteNotif = async (req, res, user_id, host_id, notification_id) => {
       res.writeHead(404);
       res.end("Notif not found");
     }
+  } catch {
+    console.error(error);
+    res.writeHead(500, { "Content-Type": "text/plain" }); //500 Internal Server Error
+    res.end("Internal server error"); //End response
+  }
+};
+
+//Sending a notification given notification_id
+exports.sendNotif = async (req, res, notification_id) => {
+  //Check notification exists
+  const notif = await notifsCollection.findOne({
+    notification_id: notification_id,
+  });
+
+  //If notif not found, return 404 error
+  if (!notif) {
+    res.writeHead(404);
+    res.end("Notif not found");
+  }
+
+  //Get notification text and user_id
+  const notifText = notif.notification_text;
+  const user_id = notif.user_id;
+
+  try {
+    //Get user email
+    const user = await usersCollection.findOne({
+      _id: new ObjectId(user_id),
+    });
+    const userEmail = user.email_address; //Get user email
+
+    //Construct email
+    const msg = {
+      to: userEmail, // Change to your recipient
+      from: "karim.smires@rutgers.edu",
+      subject: "PartySafari Notification",
+      text: notifText,
+    };
+
+    //Send email
+    sgMail
+      .send(msg)
+      .then(() => {
+        res.writeHead(200, { "Content-Type": "text/plain" }); //200 OK
+        res.end("Notif sent"); //End response
+      })
+      .catch((error) => {
+        console.error(error);
+        res.writeHead(500, { "Content-Type": "text/plain" }); //500 Internal Server Error
+        res.end("Internal server error"); //End response
+      });
   } catch {
     console.error(error);
     res.writeHead(500, { "Content-Type": "text/plain" }); //500 Internal Server Error
