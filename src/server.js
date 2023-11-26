@@ -5,8 +5,7 @@ const url = require("url");
 const serveLandingPage = require("./views/landingPage.views.js");
 const serveNotifsPage = require("./views/notifsPage.views.js");
 const serveStaticFile = require("./views/staticFile.views.js");
-//const handleUserRequests = require('./routes/user.routes.js');
-//const handlePartyRequests = require('./routes/party.routes.js');
+
 
 //Create the server
 const server = http.createServer((req, res) => {
