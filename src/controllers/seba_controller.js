@@ -375,8 +375,8 @@ async function processPayment(request, response){
                     },
                     quantity: 1
                 }],
-                success_url: `${process.env.SERVER_URL}/success.html`,
-                cancel_url: `${process.env.SERVER_URL}/checkout.html`
+                success_url: `${process.env.SERVER_URL}/public/html/checkoutSuccess.html`,
+                cancel_url: `${process.env.SERVER_URL}/public/html/checkoutPage.html`
             })
 
             await checkoutConfirmation(response, transaction_id);
