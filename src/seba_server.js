@@ -4,7 +4,7 @@ const http = require('http');
 const url = require('url');
 
 // Import route handler
-const router = require("../routes/seba_router.js");
+const router = require("./routes/seba_router.js");
 
 // Host & Port
 const host = 'localhost';
