@@ -6,6 +6,7 @@ const serveLandingPage = require("./views/landingPage.views.js");
 const serveNotifsPage = require("./views/notifsPage.views.js");
 const serveStaticFile = require("./views/staticFile.views.js");
 
+
 //Create the server
 const server = http.createServer((req, res) => {
   //CORS Allow all origins
