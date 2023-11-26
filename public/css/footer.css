@@ -1,0 +1,33 @@
+:root {
+  --bg: #404040;
+  --bg-darkened: #333333;
+  --orange: #f2af6f;
+  --darkened-orange: #f0a35c;
+  --blue: #6cd7f4;
+  --green: #baf26f;
+  --darkened-green: #99eb2d;
+  --almost-white: rgb(226, 226, 226);
+}
+
+.footer_container {
+  margin-top: 20px;
+  padding: 5px;
+}
+
+.logo {
+  color: var(--orange);
+  letter-spacing: 3px;
+  text-align: center;
+  font-size: 26px;
+  font-weight: bold;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+
+.slogan {
+  padding: 10px;
+  margin-top: 15px;
+  color: var(--green);
+  letter-spacing: 2px;
+  text-align: center;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
