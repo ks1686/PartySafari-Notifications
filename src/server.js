@@ -1,10 +1,13 @@
 const http = require("http");
 const url = require("url");
 
-//Import route handler
+//Import pages
 const serveLandingPage = require("./views/landingPage.views.js");
 const serveNotifsPage = require("./views/notifsPage.views.js");
 const serveStaticFile = require("./views/staticFile.views.js");
+
+//Import routers
+const notifsRouter = require("./routes/notifs.routes.js");
 
 //Create the server
 const server = http.createServer((req, res) => {
@@ -20,6 +23,8 @@ const server = http.createServer((req, res) => {
     serveNotifsPage(req, res);
   } else if (pathname.endsWith(".js") || pathname.endsWith(".css")) {
     serveStaticFile(req, res);
+  } else if (pathname.startsWith("/api/notifications")) {
+    notifsRouter(req, res);
   } else {
     res.writeHead(404);
     res.end("Page not found");
