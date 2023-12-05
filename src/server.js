@@ -16,8 +16,7 @@ const server = http.createServer((request, response) => {
 
   if (pathname.includes("/api/notifications")) {
     notifsRouter.applicationServer(request, response); //call notifs router
-  }
-  if (
+  } else if (
     pathname === "/promotions" ||
     pathname === "/create-checkout-session" ||
     pathname === "/shopping_cart" ||
