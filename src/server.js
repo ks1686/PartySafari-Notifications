@@ -1,40 +1,37 @@
-const http = require("http");
-const url = require("url");
+const http = require("http"); //import http module
+const url = require("url"); //import url module
+const notifsRouter = require("./routes/notifs.routes.js"); //import notifs router module
+const sebaRouter = require("./routes/seba_router.js"); //import sebaRouter router module
 
-//Import pages
-const serveLandingPage = require("./views/landingPage.views.js");
-const serveNotifsPage = require("./views/notifsPage.views.js");
-const serveStaticFile = require("./views/staticFile.views.js");
+//specify host and port
+const host = "localhost";
+const port = 8080;
 
-//Import routers
-const notifsRouter = require("./routes/notifs.routes.js");
-
-//Create the server
-const server = http.createServer((req, res) => {
+//create server
+const server = http.createServer((request, response) => {
   //CORS Allow all origins
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  const parsedUrl = url.parse(req.url);
-  const pathname = parsedUrl.pathname;
+  response.setHeader("Access-Control-Allow-Origin", "*"); //allow all origins
+  const parsedUrl = url.parse(request.url); //parse url
+  const pathname = parsedUrl.pathname; //get pathname
 
-  // Route the request to the appropriate handler
-  if (pathname === "/") {
-    serveLandingPage(req, res);
-  } else if (pathname === "/notifications") {
-    serveNotifsPage(req, res);
-  } else if (pathname.endsWith(".js") || pathname.endsWith(".css")) {
-    serveStaticFile(req, res);
-  } else if (pathname.startsWith("/api/notifications")) {
-    notifsRouter(req, res);
+  if (pathname.includes("/api/notifications")) {
+    notifsRouter.applicationServer(request, response); //call notifs router
+  } else if (
+    pathname === "/promotions" ||
+    pathname === "/create-checkout-session" ||
+    pathname === "/shopping_cart" ||
+    pathname === "/transactions"
+  ) {
+    router.applicationServer(request, response); //call seba router
   } else {
-    res.writeHead(404);
-    res.end("Page not found");
+    response.writeHead(404); //response code: Not Found
+    response.end("Not Found"); //response message
   }
 });
 
-const port = 3000;
-const host = "localhost";
+//listen to server
 server.listen(port, host, () => {
   console.log(`Server is running on http://${host}:${port}`);
 });
 
-module.exports = server;
+module.exports = server; //export server

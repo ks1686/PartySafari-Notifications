@@ -4,22 +4,11 @@
 - `package-lock.json`: Automatically generated file for any operations where npm modifies either the node_modules tree or `package.json`.
 - `package.json`: Lists the packages your project depends on and provides information about the project (like its version).
 
-### `/public`: The client-facing codebase.
-
-- `client.js`: Handles client-side API calls.
-- `/components`: Modular JavaScript files for different components of the application.
-- `/css`: Styling files for the client-side application.
-- `/html`: HTML templates and pages for the application.
-
 ### `/src`: The server-side codebase.
 
-- `/controllers`: Contains controllers to handle database interaction.
-- ## `/model`: Represents the application's data structures.
-- `/routes`: Routes requests to respective controllers.
-- `server.js`: The main entry point for the Node.js server.
-- `/views`: Server-side templates and views.
-  - `landingPage.views.js`: Serves the landing page view.
-  - `notifsPage.views.js`: (WIP). Use Postman to test notification API.
+- `/controllers`: Contains controllers
+- `/routes`: Contains routes
+- `server.js`: run this to begin sending HTTP requests through Postman
 
 ## Additional Information
 
@@ -32,3 +21,5 @@
   ```
 
 - Make sure you have the necessary node dependencies. Rebuild your package with `npm ci` to be safe.
+
+- To run the server, use open integrated terminal in `/src` and use command _node server.js_.
