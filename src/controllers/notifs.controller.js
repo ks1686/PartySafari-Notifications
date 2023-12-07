@@ -87,7 +87,7 @@ async function createNotif(request, response, user_id, host_id) {
       response.setHeader("Content-Type", "text/plain"); //set content type to plain text
       response.writeHead(201); //Response Code: Created
       response.end("Notification created"); //Response Message
-    } catch {
+    } catch (error) {
       response.writeHead(400); //Response Code: Bad Request
       response.end("Bad Request"); //Response Message
     } finally {
@@ -217,6 +217,8 @@ async function sendNotif(request, response, notif_id) {
       });
   } catch (error) {
     console.error(error); //log error
+    response.writeHead(400, { "Content-Type": "text/plain" }); //400 Bad Request
+    response.end("Bad Request"); //End response
   }
 }
 

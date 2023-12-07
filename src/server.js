@@ -22,7 +22,7 @@ const server = http.createServer((request, response) => {
     pathname === "/shopping_cart" ||
     pathname === "/transactions"
   ) {
-    router.applicationServer(request, response); //call seba router
+    sebaRouter.applicationServer(request, response); //call seba router
   } else {
     response.writeHead(404); //response code: Not Found
     response.end("Not Found"); //response message
