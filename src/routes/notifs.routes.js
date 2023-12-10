@@ -136,7 +136,7 @@ function applicationServer(request, response) {
   //GET request; get notif or send notif
   if (request.method == "GET") {
     try {
-      //if get notif
+      //if get notif; url contains: /api/notifications/getNotif/?notif_id=notif_id
       if (pathName.includes("/getNotif")) {
         //get params
         const notif_id = getQueryParamsForNotifs(request.url, request.method);
@@ -155,7 +155,7 @@ function applicationServer(request, response) {
         }
       }
 
-      //if send notif
+      //if send notif; url contains: /api/notifications/sendNotif/?notif_id=notif_id
       else if (pathName.includes("/sendNotif")) {
         //get params
         const notif_id = getQueryParamsForNotifs(request.url, request.method);
