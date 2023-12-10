@@ -69,24 +69,41 @@ function getQueryParamsForNotifs(url, request) {
     }
   }
 
-  //PUT request
-  //update notif; body contains notif_text, URL contains: /api/notifications/updateNotif?notif_id={notif_id}
-  else if (request == "PUT" && url.includes("/updateNotif")) {
-    //regex to isolate notif_id
-    const request_regex = new RegExp(
-      /\/api\/notifications\/updateNotif\/?\?notif_id=([^&]*)/
-    );
-    const match = url.match(request_regex);
+// PUT request to update notification; body contains notif_text, URL contains: /api/notifications/updateNotif?notif_id={notif_id}
+else if (request === "PUT" && url.includes("/updateNotif")) {
+  // Regex to isolate notif_id
+  const request_regex = new RegExp(
+    /\/api\/notifications\/updateNotif\/?\?notif_id=([^&]*)/
+  );
+  const match = url.match(request_regex);
 
-    //check if there is a match
-    if (match !== null && match[1] !== undefined && match[1] !== "") {
-      const notif_id = match[1];
-      return notif_id;
-    } else {
-      //no match found
-      return null;
-    }
+  // Check if there is a match
+  if (match !== null && match[1] !== undefined && match[1] !== "") {
+    const notif_id = match[1];
+    return notif_id;
+  } else {
+    // No match found
+    return null;
   }
+}
+// ELSE IF for flipping notifications global boolean; URL contains: /api/notifications/flipNotificationsGlobal?user_id={user_id}
+else if (request === "PUT" && url.includes("/flipNotificationsGlobal")) {
+  // Regex to isolate user_id
+  const request_regex = new RegExp(
+    /\/api\/notifications\/flipNotificationsGlobal\/?\?user_id=([^&]*)/
+  );
+  const match = url.match(request_regex);
+
+  // Check if there is a match
+  if (match !== null && match[1] !== undefined && match[1] !== "") {
+    const user_id = match[1];
+    return user_id;
+  } else {
+    // No match found
+    return null;
+  }
+}
+
 
   //DELETE request
   //delete notif; URL contains: /api/notifications/deleteNotif/?notif_id={notif_id}
@@ -192,31 +209,44 @@ function applicationServer(request, response) {
     }
   }
 
-  //PUT request; update notif
-  else if (request.method == "PUT") {
-    try {
-      //if update notif
-      if (pathName.includes("/updateNotif")) {
-        //get params
-        const notif_id = getQueryParamsForNotifs(request.url, request.method);
-        //check if params are valid
-        if (notif_id === null) {
-          response.writeHead(400); //Response Code: Bad Request
-          response.end(
-            "Bad Request. One or more query parameters are empty or invalid."
-          ); //Response Message
-          done = true; //request is done
-        } else {
-          controller.updateNotif(request, response, notif_id); //update notif
-          done = true; //request is done
-        }
+ // PUT request; update notif
+else if (request.method === "PUT") {
+  try {
+    // If updating notif
+    if (pathName.includes("/updateNotif")) {
+      // Get params
+      const notif_id = getQueryParamsForNotifs(request.url, request.method);
+      // Check if params are valid
+      if (notif_id === null) {
+        response.writeHead(400); // Response Code: Bad Request
+        response.end("Bad Request. One or more query parameters are empty or invalid."); // Response Message
+        done = true; // Request is done
+      } else {
+        controller.updateNotif(request, response, notif_id); // Update notif
+        done = true; // Request is done
       }
-    } catch (ex) {
-      response.writeHead(400); //Response Code: Bad Request
-      response.end("Bad Request"); //Response Message
-      done = true; //request is done
     }
+    // If flipping notifications global boolean
+    else if (pathName.includes("/flipNotificationsGlobal")) {
+      // Get params
+      const user_id = getQueryParamsForNotifs(request.url, request.method);
+      // Check if params are valid
+      if (user_id === null) {
+        response.writeHead(400); // Response Code: Bad Request
+        response.end("Bad Request. One or more query parameters are empty or invalid."); // Response Message
+        done = true; // Request is done
+      } else {
+        controller.flipNotificationsGlobal(request, response, user_id); // Flip notifications global
+        done = true; // Request is done
+      }
+    }
+  } catch (ex) {
+    response.writeHead(400); // Response Code: Bad Request
+    response.end("Bad Request"); // Response Message
+    done = true; // Request is done
   }
+}
+
 
   //DELETE request; delete notif
   else if (request.method == "DELETE") {

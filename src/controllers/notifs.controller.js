@@ -3,6 +3,7 @@ const { MongoClient } = require("mongodb"); //import mongodb module
 const sgMail = require("@sendgrid/mail"); //import sendgrid module
 const Filter = require("bad-words"); //import bad-words module
 const dotenv = require("dotenv"); //import dotenv module
+const crypto = require('crypto');
 dotenv.config(); //configure dotenv module
 
 //set up db connection
@@ -54,6 +55,46 @@ async function getNotif(request, response, notif_id) {
   }
 }
 
+
+async function flipNotificationsGlobal(request, response, user_id) {
+  const client = await initiateDBConnection(response); // Connect to the database
+
+  try {
+    // TODO: Use ST2 cookie implementation to verify access to API
+
+    // Get user document
+    const userCollection = client.db("Notifications").collection("users");
+    const user = await userCollection.findOne({ user_id: user_id });
+
+    // If user not found
+    if (!user) {
+      response.writeHead(404); // Response Code: Not Found
+      response.end("User not found"); // Response Message
+    } else {
+      // Flip the boolean field
+      const newValue = !user.settings.notifications.enabled.global;
+
+      // Update the document
+      await userCollection.updateOne(
+        { user_id: user_id },
+        { $set: { "settings.notifications.enabled.global": newValue } }
+      );
+
+      // Prepare and send response
+      response.setHeader("Content-Type", "application/json"); // Set content type to JSON
+      response.writeHead(200); // Response Code: OK
+      response.end(JSON.stringify({ success: true, newValue: newValue }));
+    }
+  } catch (err) {
+    response.writeHead(400); // Response Code: Bad Request
+    response.end("Bad Request"); // Response Message
+    console.log(err);
+  } finally {
+    await client.close(); // Close the database connection
+  }
+}
+
+
 //createNotif function
 async function createNotif(request, response, user_id, host_id) {
   const client = await initiateDBConnection(response); //connect to db
@@ -87,7 +128,7 @@ async function createNotif(request, response, user_id, host_id) {
       response.setHeader("Content-Type", "text/plain"); //set content type to plain text
       response.writeHead(201); //Response Code: Created
       response.end("Notification created"); //Response Message
-    } catch {
+    } catch (error) {
       response.writeHead(400); //Response Code: Bad Request
       response.end("Bad Request"); //Response Message
     } finally {
@@ -216,7 +257,9 @@ async function sendNotif(request, response, notif_id) {
         response.end("Internal server error"); //End response
       });
   } catch (error) {
-    console.error(error); //log error
+    console.log(error); //log error
+    response.writeHead(400, { "Content-Type": "text/plain" }); //400 Bad Request
+    response.end("Bad Request"); //End response
   }
 }
 
@@ -226,4 +269,5 @@ module.exports = {
   deleteNotif,
   updateNotif,
   sendNotif,
+  flipNotificationsGlobal,
 };
